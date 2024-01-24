@@ -1,0 +1,142 @@
+---
+title: "HW1"
+output: pdf_document
+author: "Mason Turner"
+date: "1/23/2024"
+---
+
+Note: This assumes my working directory is C:\\Users\\mctur\\OneDrive\\Desktop\\Advanced_Data_Mining\\datamining-main\\Rscripts
+
+**Importing necessary packages.**
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(knitr)
+```
+
+**Question 1.a - Reading Su_raw_matrix.txt into a variable called 'su' using the 'read.delim' function.**
+```{r}
+filename = 'data/Su_raw_matrix.txt'
+su <- read.delim(filename, header = TRUE)
+```
+
+**Question 1.b - Using 'mean' and 'sd' functions to find mean and standard deviation of Liver_2.CEL column. Then printing them out.**
+```{r}
+L2C_mean <- mean(su$Liver_2.CEL)
+L2C_sd <- sd(su$Liver_2.CEL)
+L2C_mean
+L2C_sd
+```
+
+**Question 1.c - Using the 'colMeans' and 'colSums' functions to get the average and total values of each column. Then printing them out.**
+```{r}
+mean_values <- colMeans(su)
+sum_values <- colSums(su)
+mean_values
+sum_values
+```
+
+**Question 2 - Generating 10000 numbers for the following (mean, sigma) pairs and plotting histograms for each.**
+
+**Question 2.a - mean=0, sigma=0.2**
+```{r}
+ggplot(data.frame(X = rnorm(10000, 0, 0.2)), aes(x = X)) + geom_histogram()
+```
+
+**Question 2.b - mean=0, sigma=0.5**
+```{r}
+ggplot(data.frame(X = rnorm(10000, 0, 0.5)), aes(x = X)) + geom_histogram()
+```
+
+**Question 3 - Performing steps to create sample data and observe how each plot function works. Running the following commands given by the Homework for 3a through 3e.**
+
+**Question 3.a - Creating the sample data.**
+```{r}
+dat <- data.frame(cond = factor(rep(c("A", "B"), each=200)),
+rating = c(rnorm(200),rnorm(200, mean=.8)))
+```
+
+**Question 3.b - Overlaid histograms.**
+```{r}
+ggplot(dat, aes(x=rating, fill=cond)) +
+geom_histogram(binwidth=.5, alpha=.5, position="identity")
+```
+
+**Question 3.c - Interleaved histograms.**
+```{r}
+ggplot(dat, aes(x=rating, fill=cond)) + geom_histogram(binwidth=.5, position="dodge")
+```
+
+**Question 3.d - Density plots.**
+```{r}
+ggplot(dat, aes(x=rating, colour=cond)) + geom_density()
+```
+
+**Question 3.e - Density plots with semitransparent fill.**
+```{r}
+ggplot(dat, aes(x=rating, fill=cond)) + geom_density(alpha=.3)
+```
+
+**Question 3.f - Reading 'diabetes_train.csv' into a variable called 'diabetes' and applying the same functions 3.b through 3.e. I first downloaded this data then put it in the 'data' folder.**
+
+```{r}
+filename2 <- 'data/diabetes_train.csv'
+diabetes <- read.csv(filename2, header = TRUE, sep = ',')
+```
+
+**Overlaid histograms.**
+```{r}
+ggplot(diabetes, aes(x=mass, fill=class)) +
+geom_histogram(binwidth=.5, alpha=.5, position="identity")
+```
+
+**Interleaved histograms.**
+```{r}
+ggplot(diabetes, aes(x=mass, fill=class)) + geom_histogram(binwidth=.5, position="dodge")
+```
+
+**Density plots.**
+```{r}
+ggplot(diabetes, aes(x=mass, colour=class)) + geom_density()
+```
+
+**Density plots with semitransparent fill.**
+```{r}
+ggplot(diabetes, aes(x=mass, fill=class)) + geom_density(alpha=.3)
+```
+
+**Question 4 - Read the titanic.csv file to a variable named 'passengers' then perform the following steps and explain the operation.**
+```{r}
+filename3 <- 'data/titanic.csv'
+passengers <- read.csv(filename3, header = TRUE, sep = ',')
+```
+
+**Question 4.a - Shows the summaries of each column in 'passengers' after dropping na values.**
+```{r}
+passengers %>% drop_na() %>% summary()
+```
+
+**Question 4.b - Shows the rows with a 'Sex' value of 'male'.**
+```{r}
+passengers %>% filter(Sex == "male") %>% head(10)
+```
+
+**Question 4.c - Lists the dataframe rows in descending order of 'Fare' (most to least expensive.)**
+```{r}
+passengers %>% arrange(desc(Fare)) %>% head(10)
+```
+
+**Question 4.d - Creates a new column called 'FamSize' (family size) that is equal to Parch (number of parents/children) + SibSp (number of siblings), then displays rows with the new column.**
+```{r}
+passengers %>% mutate(FamSize = Parch + SibSp) %>% head(10)
+```
+
+**Question 4.e - Groups the rows by 'Sex' then shows the mean 'fare' and number of survivors for each 'Sex.'**
+```{r}
+passengers %>% group_by(Sex) %>% summarise(meanFare = mean(Fare), numSurv = sum(Survived))
+```
+
+**Question 5- Using the 'quantile' function to calculate the 10th, 30th, 50th and 60th percentiles of skin attribute of diabetes data.**
+```{r}
+quantile(diabetes$skin, probs=c(0.1, 0.3, 0.5, 0.6))
+```
